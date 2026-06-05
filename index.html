@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earn Master</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Raleway:wght@400;600&display=swap');
+
+* { box-sizing:border-box; margin:0; padding:0; font-family:'Raleway', sans-serif; }
+
+body {
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color:#fff;
+}
+
+@keyframes gradientBG{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.container {
+    background: rgba(20,20,20,0.85);
+    padding:30px;
+    border-radius:20px;
+    width:360px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.7);
+    text-align:center;
+}
+
+h1 {
+    font-family:'Orbitron', sans-serif;
+    font-size:28px;
+    color:#00ffcc;
+    margin-bottom:25px;
+}
+
+/* Stats */
+.stats p{
+    font-size:15px;
+    margin:8px 0;
+}
+
+/* Progress Circle */
+.progress-circle {
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background: conic-gradient(#00ffcc 0%, #00ffcc 0%, rgba(0,255,204,0.1) 100%);
+    margin:20px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    font-size:19px;
+    color:#00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+}
+
+/* Buttons */
+.buttons button {
+    width:95%;
+    padding:15px;
+    margin:12px 0;
+    border:none;
+    border-radius:12px;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+    color:#fff;
+    background: linear-gradient(45deg,#ff512f,#dd2476);
+    transition:0.3s;
+}
+.buttons button:hover{
+    background: linear-gradient(45deg,#dd2476,#ff512f);
+    transform: translateY(-2px);
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Earn Master</h1>
+
+    <div class="stats">
+        <p>Watched Ads: <span id="watched-ads">0</span></p>
+        <p>Earned Points: <span id="earned-points">0.00</span></p>
+    </div>
+
+    <div class="progress-circle" id="progress-circle">
+        <span id="ads-progress">0%</span>
+    </div>
+
+    <div class="buttons">
+        <button id="watch-ad-btn">Watch Ad</button>
+    </div>
+</div>
+
+<!-- Monetag SDK -->
+<<script src='//libtl.com/sdk.js' data-zone='11065901' data-sdk='show_11065901'></script>
+<script>
+let watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount')) || 0;
+let earnedPoints = parseFloat(localStorage.getItem('earnedPoints')) || 0;
+let monetagLoaded = false;
+
+// Initialize
+document.getElementById('watched-ads').textContent = watchedAdsCount;
+document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
+updateProgressCircle();
+
+document.getElementById('watch-ad-btn').disabled = true;
+
+// Check Monetag SDK
+function checkSDK(){
+    if(typeof window.show_11065901 === 'function'){
+        monetagLoaded = true;
+        document.getElementById('watch-ad-btn').disabled = false;
+    } else {
+        setTimeout(checkSDK, 600);
+    }
+}
+window.addEventListener('DOMContentLoaded', checkSDK);
+
+function updateProgressCircle(){
+    let percent = Math.min((watchedAdsCount / 10) * 100, 100);
+    document.getElementById('ads-progress').textContent = Math.round(percent) + '%';
+    document.getElementById('progress-circle').style.background = conic-gradient(#00ffcc ${percent}%, rgba(0,255,204,0.1) ${percent}%);
+}
+
+// Watch Ad Button
+document.getElementById('watch-ad-btn').addEventListener('click', () => {
+    if(!monetagLoaded){ 
+        alert('Please wait, ad service is loading...'); 
+        return; 
+    }
+    
+    show_10081091().then(() => {
+        watchedAdsCount++;
+        earnedPoints += 0.5;document.getElementById('watched-ads').textContent = watchedAdsCount;
+        document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
+        
+        localStorage.setItem('watchedAdsCount', watchedAdsCount);
+        localStorage.setItem('earnedPoints', earnedPoints.toFixed(2));
+        
+        updateProgressCircle();
+    }).catch(() => {
+        alert('Ad could not be loaded. Try again!');
+    });
+});
+</script>
+
+</body>
+</html>
